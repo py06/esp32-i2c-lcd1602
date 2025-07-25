@@ -27,20 +27,28 @@
  * @brief Interface definitions for the ESP32-compatible I2C LCD1602 component.
  *
  * This component provides structures and functions that are useful for communicating with the device.
- *
- * Technically, the LCD1602 device is an I2C not SMBus device, however some SMBus protocols can be used
- * to communicate with the device, so it makes sense to use an SMBus interface to manage communication.
  */
 
 #ifndef I2C_LCD1602_H
 #define I2C_LCD1602_H
 
 #include <stdbool.h>
-#include "smbus.h"
+#include "driver/i2c_master.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+/**
+ * @brief Structure containing information related to the I2C master device.
+ */
+
+struct i2c_info_t {
+	i2c_master_bus_handle_t *bus_handle;
+	i2c_master_dev_handle_t *dev_handle;
+	int i2c_transfer_timeout_ms;
+};
+
 
 /**
  * @brief Structure containing information related to the I2C-LCD1602 device.
@@ -48,7 +56,7 @@ extern "C" {
 typedef struct
 {
     bool init;                                          ///< True if struct has been initialised, otherwise false
-    smbus_info_t * smbus_info;                          ///< Pointer to associated SMBus info
+    struct i2c_info_t *i2c_info;				///< Pointer to associated I2C master info
     uint8_t backlight_flag;                             ///< Non-zero if backlight is to be enabled, otherwise zero
     uint8_t num_rows;                                   ///< Number of configured columns
     uint8_t num_columns;                                ///< Number of configured columns, including offscreen columns
@@ -126,14 +134,14 @@ void i2c_lcd1602_free(i2c_lcd1602_info_t ** tsl2561_info);
  * @brief Initialise a I2C-LCD1602 info instance with the specified SMBus information.
  *
  * @param[in] i2c_lcd1602_info Pointer to I2C-LCD1602 info instance.
- * @param[in] smbus_info Pointer to SMBus info instance.
+ * @param[in] i2c_info Pointer to i2c master info instance.
  * @param[in] backlight Initial backlight state.
  * @param[in] num_rows Maximum number of supported rows for this device. Typical values include 2 (1602) or 4 (2004).
  * @param[in] num_columns Maximum number of supported columns for this device. Typical values include 40 (1602, 2004).
  * @param[in] num_visible_columns Number of columns visible at any one time. Typical values include 16 (1602) or 20 (2004).
  * @return ESP_OK if successful, otherwise an error constant.
  */
-esp_err_t i2c_lcd1602_init(i2c_lcd1602_info_t * i2c_lcd1602_info, smbus_info_t * smbus_info,
+esp_err_t i2c_lcd1602_init(i2c_lcd1602_info_t * i2c_lcd1602_info, struct i2c_info_t * i2c_info,
                            bool backlight, uint8_t num_rows, uint8_t num_columns, uint8_t num_visible_columns);
 
 /**

@@ -198,7 +198,8 @@ static esp_err_t _write_to_expander(const i2c_lcd1602_info_t * i2c_lcd1602_info,
 {
     // backlight flag must be included with every write to maintain backlight state
     ESP_LOGD(TAG, "_write_to_expander 0x%02x", data | i2c_lcd1602_info->backlight_flag);
-    return smbus_send_byte(i2c_lcd1602_info->smbus_info, data | i2c_lcd1602_info->backlight_flag);
+    data |= i2c_lcd1602_info->backlight_flag;
+    return i2c_master_transmit(*i2c_lcd1602_info->i2c_info->dev_handle, &data, 1, i2c_lcd1602_info->i2c_info->i2c_transfer_timeout_ms / portTICK_PERIOD_MS);
 }
 
 // IMPORTANT - for the display to stay "in sync" it is important that errors do not interrupt the
@@ -278,13 +279,14 @@ void i2c_lcd1602_free(i2c_lcd1602_info_t ** i2c_lcd1602_info)
     }
 }
 
-esp_err_t i2c_lcd1602_init(i2c_lcd1602_info_t * i2c_lcd1602_info, smbus_info_t * smbus_info,
+esp_err_t i2c_lcd1602_init(i2c_lcd1602_info_t * i2c_lcd1602_info, struct i2c_info_t * i2c_info,
                            bool backlight, uint8_t num_rows, uint8_t num_columns, uint8_t num_visible_columns)
 {
     esp_err_t err = ESP_FAIL;
     if (i2c_lcd1602_info != NULL)
     {
-        i2c_lcd1602_info->smbus_info = smbus_info;
+        i2c_lcd1602_info->i2c_info = i2c_info;
+
         i2c_lcd1602_info->backlight_flag = backlight ? FLAG_BACKLIGHT_ON : FLAG_BACKLIGHT_OFF;
         i2c_lcd1602_info->num_rows = num_rows;
         i2c_lcd1602_info->num_columns = num_columns;

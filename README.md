@@ -6,11 +6,11 @@
 
 This component provides useful access functions for the I2C-LCD1602 device, which is compatible with the HD44780 LCD controller. It uses a PCF8574A Remote 8-bit I/O Expander over the I2C bus, allowing the controller to be programmed via I2C using 4-bit mode.
 
-It is written and tested for the [ESP-IDF](https://github.com/espressif/esp-idf) environment, version 2.1, using the xtensa-esp32-elf toolchain (gcc version 5.2.0).
+It is written and tested for the [ESP-IDF](https://github.com/espressif/esp-idf) environment, version 5.5, using the xtensa-esp32-elf toolchain (gcc version 14.2.0).
 
 ## Dependencies
 
-Requires [esp32-smbus](https://github.com/DavidAntliff/esp32-smbus).
+Requires [esp_driver_i2c] (provided with esp-idf)
 
 ## Example
 
@@ -49,7 +49,6 @@ The code in this project is licensed under the MIT license - see LICENSE for det
 ## Acknowledgements
 
  * Inspired by the Arduino [DFRobot sample code](http://www.dfrobot.com/image/data/DFR0154/LiquidCrystal_I2Cv1-1.rar).
- * "SMBus" is a trademark of Intel Corporation.
  * "I2C" is a registered trademark of Phillips Corporation.
 
 ## Roadmap

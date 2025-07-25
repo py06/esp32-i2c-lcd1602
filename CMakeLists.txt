@@ -1,5 +1,5 @@
 set(COMPONENT_ADD_INCLUDEDIRS include)
 set(COMPONENT_SRCDIRS ".")
-set(COMPONENT_PRIV_REQUIRES "esp32-smbus")
+set(COMPONENT_PRIV_REQUIRES "esp_driver_i2c")
 register_component()
 
